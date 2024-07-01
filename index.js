@@ -73,19 +73,28 @@
 // Server 
 
 const http = require('http');
-
+const fs = require('fs');
+const path = require('path');
 
 const server = http.createServer((req, res) => {
-  res.setHeader('Content-Type', 'text/html');
-  res.write('<html><head><title>Node.js Class</title></head><body>');
-  res.write('<h1>Hello, world!</h1>');
-  res.write('</body></html>');
-  res.end();
+  const filePath = path.join(__dirname, 'index.html');
+
+  fs.readFile(filePath, 'utf8', (err, data) => {
+    if (err) {
+      res.writeHead(500, {'Content-Type': 'text/plain'});
+      res.end('Internal Server Error');
+      console.error('Error reading file:', err.message);
+      return;
+    }
+
+    res.setHeader('Content-Type', 'text/html');
+    res.writeHead(200);
+    res.end(data);
+  });
 });
 
-const port = 3000;
+const port = 3002;
 const host = 'localhost';
-
 
 server.listen(port, host, () => {
   console.log(`Server is listening on http://${host}:${port}`);
